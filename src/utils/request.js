@@ -1,6 +1,7 @@
 // 导出一个axios的实例  而且这个实例要有请求拦截器 响应拦截器
+import store from '@/store'
 import axios from 'axios'
-import { Message } from 'element-ui'
+import {Message} from 'element-ui'
 
 // 创建一个axios的实例
 const service = axios.create({
@@ -9,7 +10,13 @@ const service = axios.create({
 })
 
 // 请求拦截器
-service.interceptors.request.use()
+service.interceptors.request.use((config) => {
+  // 当前请求的配置
+  if (store.state.user.token) {
+    config.headers.Authorization = 'Bearer ' + store.state.user.token
+  }
+  return config
+})
 // 响应拦截器
 service.interceptors.response.use(
   (res) => {
