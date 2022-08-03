@@ -15,7 +15,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="$store.state.user.userInfo.staffPhoto" class="user-avatar" />
+          <img :src="$store.state.user.userInfo.staffPhoto" class="user-avatar" v-imgError = 'defaultImg'/>
           <span>{{$store.state.user.userInfo.username}}</span>
           <i class="el-icon-caret-bottom" />
         </div>
@@ -24,7 +24,7 @@
             <el-dropdown-item> 首页 </el-dropdown-item>
           </router-link>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display: block">登出</span>
+            <span style="display: block" @click='logout'>登出</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -38,6 +38,11 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
 export default {
+  data() {
+    return {
+      defaultImg:'https://img2.baidu.com/it/u=1880320954,1568482765&fm=253&fmt=auto&app=138&f=JPEG?w=542&h=500'
+    }
+  },
   components: {
     Breadcrumb,
     Hamburger,
@@ -53,6 +58,10 @@ export default {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     },
+    async logout() {
+     await this.$store.dispatch('user/logout')
+     this.$router.push('/login')
+    }
   },
 }
 </script>

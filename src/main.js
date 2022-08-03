@@ -15,6 +15,7 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import * as directives from '@/directives'
 
 /**
  * If you don't want to use mock-server
@@ -33,6 +34,22 @@ if (process.env.NODE_ENV === 'production') {
 Vue.use(ElementUI, {locale})
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
+
+// 自定义指令
+// 参数1.自定义指令的名字，不需要+ v-
+// 参数2：是配置对象
+// Vue.directive('imgError', {
+//   // 当被绑定的元素插入到DOM中时
+//   inserted: function (el, {value}) {
+//     // 聚焦元素
+//     el.onerror = function () {
+//       el.src = value
+//     }
+//   },
+// })
+for (let key in directives) {
+  Vue.directive(key, directives[key])
+}
 
 Vue.config.productionTip = false
 

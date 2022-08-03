@@ -2,6 +2,8 @@
 import store from '@/store'
 import axios from 'axios'
 import {Message} from 'element-ui'
+import {getTokenTime} from './auth'
+import router from '@/router'
 
 // 创建一个axios的实例
 const service = axios.create({
@@ -10,10 +12,23 @@ const service = axios.create({
 })
 
 // 请求拦截器
-service.interceptors.request.use((config) => {
+service.interceptors.request.use(async (config) => {
+  const tokenTime = getTokenTime()
+  const currentTime = Date.now()
+  const timeout = 2 * 60 * 60 * 1000 //2小时
   // 当前请求的配置
   if (store.state.user.token) {
-    config.headers.Authorization = 'Bearer ' + store.state.user.token
+    // token存在时先判断token有没有过期
+    if (currentTime - tokenTime > timeout) {
+      // 过期 清空token 跳回到登录页
+      await store.dispatch('user/logout')
+      router.push('/login')
+      // 错误信息提示
+      return Promise.reject(new Error('登录过期'))
+    } else {
+      // token 没有过期再携带请求头
+      config.headers.Authorization = 'Bearer ' + store.state.user.token
+    }
   }
   return config
 })
@@ -30,8 +45,17 @@ service.interceptors.response.use(
     Message.error(message)
     return Promise.reject(new Error(message))
   },
-  function (error) {
+  async function (error) {
     // 对响应错误做点什么
+    // error?.response?.status === 401 es11新语法，判断是否存在error，error对象里面是否存在response属性等等
+    if (error?.response?.status === 401) {
+      Message.error('登录过期')
+      // 过期 清空token 跳回到登录页
+      await store.dispatch('user/logout')
+      router.push('/login')
+    } else {
+      Message.error(error.message)
+    }
     return Promise.reject(error)
   },
 )

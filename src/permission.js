@@ -4,7 +4,7 @@ import router from '@/router'
 import store from '@/store'
 import {Store} from 'vuex'
 
-// 全局前置路由守卫
+// 路由全局前置守卫
 const whiteList = ['/login', '/404']
 // 会在所有路由进入之前触发
 router.beforeEach((to, from, next) => {
@@ -18,7 +18,7 @@ router.beforeEach((to, from, next) => {
       store.dispatch('user/getUserInfo')
     }
     //  登录成功后不能再退回到登录页面
-    if (token.path === '/login') {
+    if (to.path === '/login') {
       next('/')
     } else {
       next()

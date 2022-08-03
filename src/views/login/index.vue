@@ -63,12 +63,7 @@ export default {
           },
         ],
         password: [
-          {required: true, message: '请输入密码', trigger: 'blur'},
-          // {
-          //   pattern: /^(?![a-zA-Z]+$)(?![A-Z0-9]+$)(?![A-Z\W_!@#$%^&*`~()-+=]+$)(?![a-z0-9]+$)(?![a-z\W_!@#$%^&*`~()-+=]+$)(?![0-9\W_!@#$%^&*`~()-+=]+$)[a-zA-Z0-9\W_!@#$%^&*`~()-+=]/,
-          //   message: '密码请包含数字，字母，特殊字符，并且不能少于6位',
-          //   trigger: 'blur',
-          // },
+          {required: true, message: '请输入密码', trigger: 'blur'}
         ],
       },
       isLogin:false

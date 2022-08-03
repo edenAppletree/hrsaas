@@ -1,5 +1,7 @@
 // 登录成功以后的用户信息
-import {login, getUserInfoApi, getUserDetailInfo} from '@/api/user.js'
+import { login, getUserInfoApi, getUserDetailInfo } from '@/api/user.js'
+import { setTokenTime } from '@/utils/auth'
+
 export default {
   namespaced: true,
   state: {
@@ -18,7 +20,7 @@ export default {
     async getToken(context, payload) {
       const res = await login(payload)
       context.commit('setToken', res)
-      // console.log(222);
+      setTokenTime()
     },
     // 获取用户信息
     async getUserInfo(context) {
@@ -26,6 +28,11 @@ export default {
       const userDetailInfo = await getUserDetailInfo(userBasicInfo.userId)
       // console.log(userBasicInfo)
       context.commit('setUserInfo', {...userBasicInfo, ...userDetailInfo})
+    },
+    // 退出
+    logout(context) {
+      context.commit('setToken', '')
+      context.commit('setUserInfo', {})
     },
   },
 }
