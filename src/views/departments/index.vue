@@ -1,20 +1,43 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
-      <h2>组织架构</h2>
+      <el-card class="box-card">
+        <tree-tools :treeNode="company" :isRoot='true'></tree-tools>
+        <!-- 树形控件 -->
+        <el-tree :data="treeDate" :props="defaultProps" default-expand-all>
+          <template v-slot="{data}">
+            <tree-tools :treeNode="data"></tree-tools>
+          </template>
+        </el-tree>
+      </el-card>
     </div>
   </div>
 </template>
 
 <script>
+import TreeTools from './components/tree-tools.vue'
 export default {
   data() {
-    return {}
+    return {
+      treeDate: [
+        {name: '总裁办', children: [{name: '董事会'}]},
+        {name: '行政部'},
+        {name: '人事部'},
+      ],
+      defaultProps: {
+        label: 'name',
+      },
+      company: {name: '传智教育', manager: '负责人'},
+    }
+  },
+
+  components: {
+    TreeTools,
   },
 
   created() {},
 
-  methods: {}
+  methods: {},
 }
 </script>
 
