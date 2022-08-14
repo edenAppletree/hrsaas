@@ -34,8 +34,8 @@ export function getDeptByIdApi(id) {
 // 根据id修改部门详情
 export const EditDeptsApi = (data) => {
   return request({
-    url: '/company/department/'+data.id,
+    url: '/company/department/' + data.id,
     method: 'PUT',
-    data
+    data,
   })
 }

@@ -1,4 +1,5 @@
 import PageTools from '@/components/PageTools'
+import UploadExcel from '@/components/UploadExcel'
 
 // export default {
 //   install(Vue) {
@@ -7,7 +8,7 @@ import PageTools from '@/components/PageTools'
 // }
 
 // 优化
-const components = [PageTools]
+const components = [PageTools, UploadExcel]
 
 export default {
   install(Vue) {
