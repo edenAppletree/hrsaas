@@ -3,7 +3,7 @@
     <div class="app-container">
       <el-card>
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="登录账户设置" name="login" >
+          <el-tab-pane label="登录账户设置" name="login">
             <!-- 放置表单 -->
             <el-form
               label-width="120px"
@@ -24,8 +24,12 @@
               </el-form-item>
             </el-form>
           </el-tab-pane>
-          <el-tab-pane label="个人详情" name="userinfo"><UserInfo/> </el-tab-pane>
-          <el-tab-pane label="岗位信息" name="job"/>
+          <el-tab-pane label="个人详情" name="userinfo"
+            ><UserInfo />
+          </el-tab-pane>
+          <el-tab-pane label="岗位信息" name="job"
+            ><JobInfo></JobInfo
+          ></el-tab-pane>
         </el-tabs>
       </el-card>
     </div>
@@ -35,16 +39,18 @@
 <script>
 import {getUserDetailInfo, saveUserDetailById} from '@/api/user'
 import UserInfo from './components/user-info.vue'
+import JobInfo from './components/JobInfo.vue'
 import Cookies from 'js-cookie'
 export default {
   data() {
     return {
       formDate: {},
-      activeName:Cookies.get('employeeDetailTab') || 'userinfo'
+      activeName: Cookies.get('employeeDetailTab') || 'userinfo',
     }
   },
   components: {
     UserInfo,
+    JobInfo,
   },
 
   created() {
@@ -64,8 +70,8 @@ export default {
       this.$router.go(-1)
     },
     handleClick() {
-      Cookies.set('employeeDetailTab',this.activeName)
-    }
+      Cookies.set('employeeDetailTab', this.activeName)
+    },
   },
 }
 </script>

@@ -33,6 +33,9 @@ for (let key in filters) {
 // 注册自定义组件
 Vue.use(components)
 
+import Print from 'vue-print-nb'
+Vue.use(Print)
+
 if (process.env.NODE_ENV === 'production') {
   const {mockXHR} = require('../mock')
   mockXHR()

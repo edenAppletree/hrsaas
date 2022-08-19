@@ -33,6 +33,7 @@
                   height: 100px;
                   padding: 10px;
                 "
+                @click="showErCode(row.staffPhoto)"
               />
             </template>
           </el-table-column>
@@ -98,6 +99,11 @@
       :visible.sync="dialogVisible"
       @add-success="getEmployeesInfo"
     ></AddEmployee>
+
+    <!-- 图片二维码弹层 -->
+    <el-dialog title="头像二维码" :visible.sync="erCodeDidlog">
+      <canvas id='canvas'></canvas>
+    </el-dialog>
   </div>
 </template>
 
@@ -106,6 +112,7 @@ import {getEmployeesInfoApi, delEmployee} from '@/api/employees'
 import employees from '@/constant/employees'
 import AddEmployee from '@/views/employees/components/AddEmployee'
 const {exportExcelMapPath, hireType} = employees
+import QRcode from 'qrcode'
 export default {
   data() {
     return {
@@ -116,6 +123,7 @@ export default {
       },
       total: 0,
       dialogVisible: false,
+      erCodeDidlog: false,
     }
   },
 
@@ -180,6 +188,17 @@ export default {
         filename: '员工列表', //非必填
         autoWidth: true, //非必填
         bookType: 'xlsx', //非必填
+      })
+    },
+    // 点击头像显示二维码弹层
+    showErCode(staffPhoto) {
+      if (!staffPhoto) {
+        return this.$message.error('该用户还未设置头像')
+      }
+      this.erCodeDidlog = true
+      this.$nextTick(() => {
+        const canvas = document.getElementById('canvas')
+        QRcode.toCanvas(canvas,staffPhoto)
       })
     },
   },
