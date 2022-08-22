@@ -118,6 +118,7 @@ export function param2Obj(url) {
   return obj
 }
 
+// 数据转化为树形
 export function transListToTree(data, pid) {
   const arr = []
   data.forEach((item) => {

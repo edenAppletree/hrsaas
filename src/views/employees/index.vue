@@ -72,7 +72,9 @@
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
-              <el-button type="text" size="small">角色</el-button>
+              <el-button type="text" size="small" @click="getRoles(row.id)"
+                >角色</el-button
+              >
               <el-button type="text" size="small" @click="onRemove(row.id)"
                 >删除</el-button
               >
@@ -102,8 +104,11 @@
 
     <!-- 图片二维码弹层 -->
     <el-dialog title="头像二维码" :visible.sync="erCodeDidlog">
-      <canvas id='canvas'></canvas>
+      <canvas id="canvas"></canvas>
     </el-dialog>
+
+    <!-- 角色分配弹层 -->
+    <AssignRole :visible.sync="showAssignRole" :currentEmployeesId='employeesId'></AssignRole>
   </div>
 </template>
 
@@ -111,6 +116,7 @@
 import {getEmployeesInfoApi, delEmployee} from '@/api/employees'
 import employees from '@/constant/employees'
 import AddEmployee from '@/views/employees/components/AddEmployee'
+import AssignRole from '@/views/employees/components/AssignRole'
 const {exportExcelMapPath, hireType} = employees
 import QRcode from 'qrcode'
 export default {
@@ -124,11 +130,14 @@ export default {
       total: 0,
       dialogVisible: false,
       erCodeDidlog: false,
+      showAssignRole: false,
+      employeesId: '',
     }
   },
 
   components: {
     AddEmployee,
+    AssignRole,
   },
 
   created() {
@@ -198,8 +207,12 @@ export default {
       this.erCodeDidlog = true
       this.$nextTick(() => {
         const canvas = document.getElementById('canvas')
-        QRcode.toCanvas(canvas,staffPhoto)
+        QRcode.toCanvas(canvas, staffPhoto)
       })
+    },
+    getRoles(id) {
+      this.showAssignRole = true
+      this.employeesId = id
     },
   },
 }

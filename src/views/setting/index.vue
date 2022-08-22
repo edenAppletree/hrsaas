@@ -1,6 +1,32 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
+      <!-- 分配权限弹框 -->
+      <el-dialog
+        title="给角色分配权限"
+        :visible.sync="rightsDialog"
+        width="50%"
+      >
+        <el-tree
+          default-expand-all
+          show-checkbox
+          node-key="id"
+          :data="permissions"
+          :props="{label: 'name'}"
+          :default-checked-keys="defaultCheckKeys"
+          ref='perTree'
+        ></el-tree>
+
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="rightsDialog = false">取 消</el-button>
+          <el-button
+            type="primary"
+            @click="onSaveRights"
+            >确 定</el-button
+          >
+        </span>
+      </el-dialog>
+      <!-- 表格 -->
       <el-tabs v-model="activeName">
         <el-tab-pane label="角色管理" name="first">
           <el-button type="primary" @click="dialogVisible = true"
@@ -11,8 +37,13 @@
             <el-table-column prop="name" label="角色名称"> </el-table-column>
             <el-table-column prop="description" label="描述"> </el-table-column>
             <el-table-column prop="address" label="操作">
-              <template>
-                <el-button size="small" type="success">分配权限</el-button>
+              <template slot-scope="{row}">
+                <el-button
+                  size="small"
+                  type="success"
+                  @click="showRightsDialog(row.id)"
+                  >分配权限</el-button
+                >
                 <el-button size="small" type="primary">编辑</el-button>
                 <el-button size="small" type="danger">删除</el-button>
               </template>
@@ -70,7 +101,10 @@
             </el-form-item>
 
             <el-form-item label="公司地址">
-              <el-input disabled v-model="companyInfo.companyAddress"></el-input>
+              <el-input
+                disabled
+                v-model="companyInfo.companyAddress"
+              ></el-input>
             </el-form-item>
             <el-form-item label="公司邮箱">
               <el-input disabled v-model="companyInfo.mailbox"></el-input>
@@ -86,8 +120,10 @@
 </template>
 
 <script>
-import {getRolesApi, AddRoleApi} from '@/api/role'
+import {getRolesApi, AddRoleApi, getRolesInfo,assignPerm} from '@/api/role'
 import {getCompanyInfoApi} from '@/api/setting'
+import {getPermissionList} from '@/api/permissions'
+import {transListToTree} from '@/utils/index'
 export default {
   data() {
     return {
@@ -97,6 +133,7 @@ export default {
       total: 0,
       page: 1,
       dialogVisible: false,
+      rightsDialog: false,
       addRoleForm: {
         name: '',
         description: '',
@@ -110,13 +147,16 @@ export default {
           },
         ],
       },
-      companyInfo:{}
+      companyInfo: {},
+      permissions: [], //权限树形数据
+      defaultCheckKeys: [], //分配权限选中项
+      roleId:''
     }
   },
 
   created() {
-    this.getRoles(),
-    this.getCompanyInfo()
+    this.getRoles(), this.getCompanyInfo()
+    this.getPermissions()
   },
 
   methods: {
@@ -156,11 +196,34 @@ export default {
     },
     async getCompanyInfo() {
       const res = await getCompanyInfoApi(
-        this.$store.state.user.userInfo.componyId
+        this.$store.state.user.userInfo.componyId,
       )
-      console.log(res)
-      this.companyInfo=res
+      this.companyInfo = res
     },
+    // 点击给角色分配权限
+    async showRightsDialog(id) {
+      this.rightsDialog = true
+      const res = await getRolesInfo(id)
+      this.defaultCheckKeys = res.permIds
+      this.roleId=id
+    },
+    // 获取权限列表
+    async getPermissions() {
+      const res = await getPermissionList()
+      const treePermission = transListToTree(res, '0')
+      this.permissions = treePermission
+      // console.log(res);
+    },
+    // 确定分配权限操作
+    async onSaveRights() {
+      this.rightsDialog = false
+      await assignPerm(
+        {id:this.roleId,
+        permIds:this.$refs.perTree.getCheckedKeys()}
+      )
+      this.$message.success('分配成功')
+      this.setRightsDialog=false
+    }
   },
 }
 </script>
