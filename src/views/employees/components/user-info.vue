@@ -1,7 +1,10 @@
 <template>
   <div class="user-info">
+    <i
+      @click="$router.push(`/employees/print/${userId}?type=personal`)"
+      class="el-icon-printer"
+    ></i>
     <!-- 个人信息 -->
-    <i @click="$router.push(`/employees/print/${userId}?type=personal`)" class='el-icon-printer'></i>
     <el-form label-width="220px">
       <!-- 工号 入职时间 -->
       <el-row class="inline-info">
@@ -59,14 +62,14 @@
         <el-col :span="12">
           <el-form-item label="员工头像">
             <!-- 放置上传图片 -->
-            <UploadImg ref="userHeaderImg" @onSuccess="userHeaderImgSuccess" />
+            <upload-img ref="headerImg" @onSuccess="headerImgSuccess" />
           </el-form-item>
         </el-col>
       </el-row>
       <!-- 保存个人信息 -->
       <el-row class="inline-info" type="flex" justify="center">
         <el-col :span="12">
-          <el-button type="primary" @click="onsaveUserDetail"
+          <el-button type="primary" @click="onSaveUserDetail"
             >保存更新</el-button
           >
           <el-button @click="$router.back()">返回</el-button>
@@ -95,7 +98,7 @@
 
         <el-form-item label="员工照片">
           <!-- 放置上传图片 -->
-          <UploadImg ref="employeesPic" @onSuccess="employeesPicSuccess" />
+          <upload-img ref="employeesPic" @onSuccess="employeesPicSuccess" />
         </el-form-item>
         <el-form-item label="国家/地区">
           <el-select v-model="formData.nationalArea" class="inputW2">
@@ -381,7 +384,7 @@
         <!-- 保存员工信息 -->
         <el-row class="inline-info" type="flex" justify="center">
           <el-col :span="12">
-            <el-button type="primary" @click="onsaveUpdatePersonal"
+            <el-button type="primary" @click="onSaveEmployeesInfo"
               >保存更新</el-button
             >
             <el-button @click="$router.back()">返回</el-button>
@@ -394,8 +397,8 @@
 
 <script>
 import EmployeeEnum from '@/constant/employees'
-import {getUserDetailInfo, saveUserDetailById} from '@/api/user'
-import {getPersonalDetail, updatePersonal} from '@/api/employees'
+import { getUserDetail, saveUserDetailById } from '@/api/user.js'
+import { getPersonalDetail, updatePersonal } from '@/api/employees.js'
 
 export default {
   data() {
@@ -469,42 +472,43 @@ export default {
     }
   },
   created() {
-    this.loadDetailInfo()
-    this.getUserDetailInfo()
+    this.loadUserDetail()
+    this.loadEmployeesInfo()
   },
   methods: {
-    async loadDetailInfo() {
-      this.userInfo = await getUserDetailInfo(this.userId)
-      this.$refs.userHeaderImg.fileList.push({
+    async loadUserDetail() {
+      this.userInfo = await getUserDetail(this.userId)
+      this.$refs.headerImg.fileList.push({
         url: this.userInfo.staffPhoto,
       })
     },
-    async getUserDetailInfo() {
+    async loadEmployeesInfo() {
       this.formData = await getPersonalDetail(this.userId)
       this.$refs.employeesPic.fileList.push({
         url: this.formData.staffPhoto,
       })
     },
-    async onsaveUserDetail() {
-      if (this.$refs.userHeaderImg.loading) {
+    async onSaveUserDetail() {
+      if (this.$refs.headerImg.loading) {
         return this.$message.error('头像正在上传中')
       }
       await saveUserDetailById(this.userInfo)
+
       this.$message.success('更新成功')
     },
-    async onsaveUpdatePersonal() {
+    async onSaveEmployeesInfo() {
       if (this.$refs.employeesPic.loading) {
         return this.$message.error('头像正在上传中')
       }
       await updatePersonal(this.formData)
       this.$message.success('更新成功')
     },
-    // 监听头像上传成功
-    userHeaderImgSuccess({url}) {
+    // 监听员工头像上传成功
+    headerImgSuccess({ url }) {
       this.userInfo.staffPhoto = url
     },
-    // 监听员工图片上传成功
-    employeesPicSuccess({url}) {
+    // 监听员工照片上传成功
+    employeesPicSuccess({ url }) {
       this.formData.staffPhoto = url
     },
   },

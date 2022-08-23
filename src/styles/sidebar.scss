@@ -26,6 +26,7 @@
     }
 
     .scrollbar-wrapper {
+      overflow-x: hidden !important;
       background: url('~@/assets/common/leftnavBg.png') no-repeat 0 100%;
     }
 
@@ -92,6 +93,7 @@
         }
       }
     }
+
     // menu hover
     .submenu-title-noDropdown,
     .el-submenu__title {

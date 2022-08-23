@@ -4,7 +4,10 @@ import getters from './getters'
 import app from './modules/app'
 import settings from './modules/settings'
 import user from './modules/user'
-import createVuexPersistedstate from 'vuex-persistedstate'
+import permission from './modules/permission'
+import tagsView from './modules/tagsView'
+
+import createVuexPersisted from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
@@ -13,10 +16,12 @@ const store = new Vuex.Store({
     app,
     settings,
     user,
+    permission,
+    tagsView,
   },
   getters,
   plugins: [
-    createVuexPersistedstate({
+    createVuexPersisted({
       reducer(state) {
         return {
           user: {
